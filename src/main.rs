@@ -1,3 +1,8 @@
+mod prime_factors;
+
+use prime_factors::pfn;
+
 fn main() {
-    println!("Hello, world!");
+    let prime_factors = pfn::factors(90125);
+    println!("{:?}",prime_factors);
 }
