@@ -1,25 +1,27 @@
-pub mod pfn{
-    pub fn factors(n: u64)  {
+
+    pub fn factors(n: u64)-> Vec<u64> {
         let mut idx = 1;
-        let mut start = 10;
-        let prime  = gen_prime_factors(start);
+        let start = 10;
+        let mut before_divide = 0; 
         let mut res = n;
         let mut prime_factors = Vec::new();
+        let mut prime  = gen_prime_factors(start);
         while res >1{
+            before_divide = res;
             for i in &prime{
-
                 if res%i==0{
                     res/=i;
-                    println!("{:?}",res);
-                    prime_factors.push(i);
-                    break;
+                    prime_factors.push(*i);
                 }
                 continue;
             }
-            idx+=1;
-            prime = gen_prime_factors(start.pow(idx));
+            if before_divide==res{
+                idx+=1;
+                prime = gen_prime_factors(start.pow(idx));
+            }
         }  
-        println!("{:?}",prime_factors);
+        prime_factors.sort();
+        prime_factors
     
     }
     
@@ -41,7 +43,7 @@ pub mod pfn{
         prime
 
     } 
-}
+
 
 #[test]
 fn no_factors() {
