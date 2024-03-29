@@ -11,26 +11,42 @@ Bob only ever answers one of five things:
 "Whatever." This is what he answers to anything else.
  */
 pub mod bob_risky {
-use regex::Regex;
+
+struct ReplyPattern{
+    question:bool,
+    all_upper:bool,
+    yell_question:bool,
+    silence:bool
+}
 pub fn reply(message: &str) -> &str {
-    let pattern =  Regex::new(r"\b[A-Z]{2,}\b").unwrap();
-    let matches:Vec<_> = pattern.find_iter(message).map(|match_| match_.as_str()) .collect();
-    let last = message[..].trim().to_string().pop();
+    let last = message[..].trim().to_string().pop().unwrap_or_else(|| ' ' );
+    let stripped = message.chars().filter(|x|x.is_ascii_alphabetic()).collect::<Vec<_>>();
     
-    println!("found {:?}",last);
-    let resp = match (matches,last){
-        Some('?')=>"Sure.",
-        Some('!')=>"Calm down, I know what I'm doing!",
+    let all_upper = if stripped.is_empty(){
+        false}else{
+        stripped.clone().into_iter().filter(|x|x.is_ascii_uppercase() ).collect::<Vec<_>>().len()==stripped.len()
+        };
+    let question = last=='?';
+    let silence = last==' ';
+    let yell_question = all_upper & question;
+    
 
-        None=>"Fine. Be that way!",
-        _ =>{
-            if !matches.is_empty(){
-                "Whoa, chill out!"
-            }else
-           { "Whatever."}
-        }
-
+    let bob_reply = ReplyPattern{
+        question:question,
+        all_upper:all_upper,
+        yell_question:yell_question,
+        silence:silence
     };
+   
+    let resp = match bob_reply{
+        ReplyPattern{yell_question:true,..}  =>"Calm down, I know what I'm doing!",
+        ReplyPattern{question:true,..} =>"Sure.",
+        ReplyPattern{silence:true,..} =>"Fine. Be that way!", 
+        ReplyPattern{all_upper:true,..} =>"Whoa, chill out!",
+        _ => "Whatever."
+        
+
+    };  
     resp
 }
 }
