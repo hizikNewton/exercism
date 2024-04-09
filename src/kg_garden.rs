@@ -39,6 +39,37 @@ While asking for Bob's plants would yield:
 Clover, grass, clover, clover
  */
 
+pub struct Students<'a>{
+    Alice:&'a str,
+    Bob:&'a str,
+    Charlie:&'a str,
+    David:&'a str,
+    Eve:&'a str,
+    Fred:&'a str,
+    Ginny:&'a str,
+    Harriet:&'a str,
+    Ileana:&'a str,
+    Joseph:&'a str,
+    Kincaid:&'a str,
+    Larry:str
+}
+
+impl<'a> Students<'a> {
+    pub fn alloc(&self,name:&str){
+    
+    }
+}
+pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
+    
+    let rows:Vec<&str> = diagram.split('\n').collect();
+    if rows.len()>1{
+        let row1 = rows[0];
+        let row2 = rows[1];
+
+    }
+    Vec::new()
+}
+
 
 
 
@@ -54,7 +85,6 @@ GG";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn different_garden_with_single_student() {
     let diagram = "VC
 RC";
