@@ -38,38 +38,58 @@ While asking for Bob's plants would yield:
 
 Clover, grass, clover, clover
  */
+pub mod kindergarten_garden{
+use std::collections::HashMap;
 
-pub struct Students<'a>{
-    Alice:&'a str,
-    Bob:&'a str,
-    Charlie:&'a str,
-    David:&'a str,
-    Eve:&'a str,
-    Fred:&'a str,
-    Ginny:&'a str,
-    Harriet:&'a str,
-    Ileana:&'a str,
-    Joseph:&'a str,
-    Kincaid:&'a str,
-    Larry:str
-}
-
-impl<'a> Students<'a> {
-    pub fn alloc(&self,name:&str){
-    
-    }
-}
 pub fn plants(diagram: &str, student: &str) -> Vec<&'static str> {
-    
+
+    let mut plant_code = HashMap::new();
+    let pairs:Vec<(char, &'static str)> = vec![
+        ('C',"clover"),
+        ('V',"violets"),
+        ('R',"radishes"),
+        ('G',"grass")
+        ];
+    for &(key, value) in &pairs {
+            plant_code.insert(key, value);
+        }
+    let mut all_pupil_plant:HashMap<&str, String> = HashMap::new();
     let rows:Vec<&str> = diagram.split('\n').collect();
-    if rows.len()>1{
-        let row1 = rows[0];
-        let row2 = rows[1];
+    for row in &rows{
+        let mut pupil = [ "Alice", "Bob", "Charlie", "David","Eve", "Fred", "Ginny", "Harriet","Ileana", "Joseph", "Kincaid",  "Larry"].iter();
+        let nrow:Vec<char> = row.chars().collect();
+        for (i,j) in nrow.iter().enumerate().step_by(2){   
+            let current_plant = format!("{}{}",j,nrow[i+1]);
+            if let Some(pupil) =  pupil.next() {
+                let former_plant = all_pupil_plant.get(pupil);
+                match former_plant {
+                   Some(fp)=> {
+                        all_pupil_plant.insert(pupil,format!("{}{}",fp,current_plant));
 
+                    },
+                   None=> {
+                    all_pupil_plant.insert(pupil,current_plant);}
+                };
+            };
+            
+     }
     }
-    Vec::new()
-}
+    let pupil_plant = all_pupil_plant.get(student);
+    
+    let mut result:Vec<&'static str> = Vec::new();
+    if let Some(p) = pupil_plant {
+        
+             p.chars().for_each(|c| {
+                 if let Some(code) = plant_code.get(&c){
+                    result.push(*code);
+                } 
+            });
+        
+    };
+    result
 
+}
+}
 
 
 
@@ -93,7 +113,6 @@ RC";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn garden_with_two_students() {
     let diagram = "VVCG
 VVRC";
@@ -102,7 +121,6 @@ VVRC";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn second_students_garden() {
     let diagram = "VVCCGG
 VVCCGG";
@@ -111,7 +129,6 @@ VVCCGG";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn third_students_garden() {
     let diagram = "VVCCGG
 VVCCGG";
@@ -120,7 +137,6 @@ VVCCGG";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_alice_first_students_garden() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -129,7 +145,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_bob_second_students_garden() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -138,7 +153,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_charlie() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -147,7 +161,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_david() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -156,7 +169,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_eve() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -165,7 +177,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_fred() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -174,7 +185,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_ginny() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -183,7 +193,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_harriet() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -192,7 +201,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_ileana() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -201,7 +209,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_joseph() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -210,7 +217,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_kincaid_second_to_last_students_garden() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
@@ -219,7 +225,6 @@ VRCCCGCRRGVCGCRVVCVGCGCV";
     assert_eq!(plants(diagram, student), expected);
 }
 #[test]
-#[ignore]
 fn for_larry_last_students_garden() {
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
 VRCCCGCRRGVCGCRVVCVGCGCV";
