@@ -4,6 +4,7 @@ use std::collections::HashMap;
 ///Instructions
 ///Given a string containing brackets [], braces {}, parentheses (), or any combination thereof, verify that any and all pairs are matched and nested correctly. The string may also contain other characters, which for the purposes of this exercise should be ignored.
 
+static mut balanced:Vec<bool> = Vec::new();
 pub fn brackets_are_balanced(string: &str) -> bool {
     let mut pair_map = HashMap::new();
     let pairs:[(char,char);3] = [('[',']'),('{','}'),('(',')')];
@@ -13,9 +14,35 @@ pub fn brackets_are_balanced(string: &str) -> bool {
     let string_char:Vec<char> = string.chars().collect();
     let length = string_char.len();
     if length%2==0{
-        let mut midpoint = length/2;
+        for (i,j) in string_char.iter().enumerate(){
+            match pair_map.get(j) {
+                Some(val)=>{
+                    let position = string_char.iter().position(|c| c==val.1);
+                    match position {
+                        Some(chIndex)=>{
+                            let subslice = &string_char[i+1..chIndex];
+                            if subslice.len()!=0{
+                                let substring:String = subslice.iter().collect();
+                                println!("{substring:?}");
+                                brackets_are_balanced(&substring);
+                            }else{
+                                balanced.push(true);
+                                if chIndex<length{
+                                    let remslice = &string_char[chIndex+1..];
+                                    let supstring:String = remslice.iter().collect();
+                                    brackets_are_balanced(&supstring);
+                                }
+                            }
+                        },
+                        None=> {return false}
+                        }
+                },
+                None=>{return false}
+            }
+        }
+       /*  let mut midpoint = length/2;
         while midpoint>0 {
-            let (lp,rp) = (string_char[midpoint-1],string_char[midpoint]);
+            let (lp,rp) = (string_char[midpoint-1],string_char[midpoint+1]);
             print!("lp,rp is {}{}",lp,rp);
             match pair_map.get(&lp){
                     Some(val)=>{
@@ -29,7 +56,8 @@ pub fn brackets_are_balanced(string: &str) -> bool {
                        return false;
                     }
                 };
-        };
+        }; */
+        print!()
         return true;
     }
     false
