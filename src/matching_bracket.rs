@@ -1,70 +1,46 @@
-pub mod matching_brackets{
+pub mod matching_brackets {
 
-use std::collections::HashMap;
-///Instructions
-///Given a string containing brackets [], braces {}, parentheses (), or any combination thereof, verify that any and all pairs are matched and nested correctly. The string may also contain other characters, which for the purposes of this exercise should be ignored.
+    use std::collections::HashMap;
+    ///Instructions
+    ///Given a string containing brackets [], braces {}, parentheses (), or any combination thereof, verify that any and all pairs are matched and nested correctly. The string may also contain other characters, which for the purposes of this exercise should be ignored.
 
-static mut balanced:Vec<bool> = Vec::new();
-pub fn brackets_are_balanced(string: &str) -> bool {
-    let mut pair_map = HashMap::new();
-    let pairs:[(char,char);3] = [('[',']'),('{','}'),('(',')')];
-    for (lb,rb) in &pairs{
-        pair_map.insert(lb, (lb,rb));
-    }
-    let string_char:Vec<char> = string.chars().collect();
-    let length = string_char.len();
-    if length%2==0{
-        for (i,j) in string_char.iter().enumerate(){
-            match pair_map.get(j) {
-                Some(val)=>{
-                    let position = string_char.iter().position(|c| c==val.1);
-                    match position {
-                        Some(chIndex)=>{
-                            let subslice = &string_char[i+1..chIndex];
-                            if subslice.len()!=0{
-                                let substring:String = subslice.iter().collect();
-                                println!("{substring:?}");
-                                brackets_are_balanced(&substring);
-                            }else{
-                                balanced.push(true);
-                                if chIndex<length{
-                                    let remslice = &string_char[chIndex+1..];
-                                    let supstring:String = remslice.iter().collect();
-                                    brackets_are_balanced(&supstring);
-                                }
+    pub fn brackets_are_balanced(string: &str) -> bool {
+        let mut pair_map = HashMap::new();
+        let pairs: [(char, char); 3] = [('[', ']'), ('{', '}'), ('(', ')')];
+        for (lb, rb) in &pairs {
+            pair_map.insert(rb, (lb, rb));
+        }
+        let mut string_char: Vec<char> = string.chars().collect();
+        let mut rem = string_char.clone();
+
+        loop {
+            if string_char.is_empty() {
+                return true;
+            }
+            'inner: {
+                for (i, j) in string_char.iter().enumerate() {
+                    match pair_map.get(j) {
+                        Some(v) => {
+                            if (i as i8 != 0) && string_char[i - 1] == *v.0 {
+                                rem.drain((i - 1)..i + 1);
+                                string_char = rem.clone();
+                                break 'inner;
+                            } else {
+                                return false;
                             }
-                        },
-                        None=> {return false}
                         }
-                },
-                None=>{return false}
+                        None => {
+                            if (i == string_char.len() - 1) && (!string_char.is_empty()) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
             }
         }
-       /*  let mut midpoint = length/2;
-        while midpoint>0 {
-            let (lp,rp) = (string_char[midpoint-1],string_char[midpoint+1]);
-            print!("lp,rp is {}{}",lp,rp);
-            match pair_map.get(&lp){
-                    Some(val)=>{
-                        if *val.0==lp && *val.1==rp{
-                            midpoint=midpoint-1;
-                        }else{
-                            return  false;
-                        }
-                    },
-                    None=> {
-                       return false;
-                    }
-                };
-        }; */
-        print!()
-        return true;
     }
-    false
 }
-
-}
-
 
 use matching_brackets::brackets_are_balanced;
 #[test]
