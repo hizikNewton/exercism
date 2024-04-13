@@ -11,6 +11,8 @@ pub mod matching_brackets {
             pair_map.insert(rb, (lb, rb));
         }
         let mut string_char: Vec<char> = string.chars().collect();
+        let legit:Vec<char>  =  pairs.iter().flat_map(|&(a,b)| vec![a,b]).collect();
+        string_char = string_char.iter().cloned().filter(|ch| legit.contains(ch)).collect();
         let mut rem = string_char.clone();
 
         loop {
@@ -40,6 +42,8 @@ pub mod matching_brackets {
             }
         }
     }
+
+    
 }
 
 use matching_brackets::brackets_are_balanced;
