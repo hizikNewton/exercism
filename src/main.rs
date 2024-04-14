@@ -1,19 +1,18 @@
-/* mod prime_factors;
-mod bob;
+/* 
 use bob::bob_risky;
-mod highscore;
-mod kg_garden;
 use kg_garden::kindergarten_garden::plants;
-mod matching_bracket;
 use matching_bracket::matching_brackets;
+use easy::sum_of_multiple::sum_of_multiples;
 */
-mod sum_of_multiple;
-use sum_of_multiple::sum_of_multiples;
-
+pub mod easy;
+pub mod medium;
+use medium::{clock::Clock};
 fn main() {
-    let res = sum_of_multiples::sum_of_multiples(1,&[0]);
+    let res = Clock::new(8, 0).to_string();
     print!("result is {res:?}");
-    /*let res = matching_brackets::brackets_are_balanced("{ }");
+    /*
+    let res = sum_of_multiples::sum_of_multiples(1,&[0]);
+    let res = matching_brackets::brackets_are_balanced("{ }");
     print!("result is {res:?}");
     let diagram = "VRCGVVRVCGGCCGVRGCVCGCGV
     VRCCCGCRRGVCGCRVVCVGCGCV";
