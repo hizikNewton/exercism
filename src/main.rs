@@ -4,11 +4,11 @@ use kg_garden::kindergarten_garden::plants;
 use matching_bracket::matching_brackets;
 use easy::sum_of_multiple::sum_of_multiples;
 */
-pub mod easy;
+
 pub mod medium;
-use medium::{clock::Clock};
+use medium::clock::Clock;
 fn main() {
-    let res = Clock::new(8, 0).to_string();
+    let res = Clock::new(1, -40).to_string();
     print!("result is {res:?}");
     /*
     let res = sum_of_multiples::sum_of_multiples(1,&[0]);
