@@ -6,11 +6,19 @@ use easy::sum_of_multiple::sum_of_multiples;
 */
 
 pub mod medium;
-use medium::clock::Clock;
+use medium::{anagram::anagrams_for};
 fn main() {
+    let word = "listen";
+    let inputs = &["enlists", "google", "inlets", "banana"];
+    let output = anagrams_for(word, inputs);
+    print!("the result {:?}",output)
+  
+}
+
+
+  /*
     let res = Clock::new(1, -40).to_string();
     print!("result is {res:?}");
-    /*
     let res = sum_of_multiples::sum_of_multiples(1,&[0]);
     let res = matching_brackets::brackets_are_balanced("{ }");
     print!("result is {res:?}");
@@ -22,4 +30,3 @@ fn main() {
      let prime_factors = prime_factors::factors(93819012551);
     println!("{:?}",prime_factors);
     println!("{:?}",bob_risky::reply("1, 2, 3 GO!"));*/
-}
