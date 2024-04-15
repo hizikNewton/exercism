@@ -1,30 +1,34 @@
 use std::collections::HashSet;
-
 pub fn anagrams_for<'a>(word: &str, possible_anagrams: &[&'a str]) -> HashSet<&'a str> {
-    let words = word.chars();
-    let mut word_set = HashSet::new();
-    let mut repeated_char = Vec::new();
-    print!("repeated_char {repeated_char:?}");
+    let words: Vec<char> = word
+        .chars()
+        .into_iter()
+        .map(|x| x.to_ascii_lowercase())
+        .collect();
+    /* let mut word_set = HashSet::new();
     words.for_each(|x| {
-        if !(word_set.insert(x)){
-            repeated_char.push(x);
-        }});
-    let mut result= HashSet::new();
+        word_set.insert(x);
+    }); */
+    let mut result = HashSet::new();
+    for anagram in possible_anagrams {
+        let anagram_word: Vec<char> = anagram
+            .chars()
+            .into_iter()
+            .map(|x| x.to_ascii_lowercase())
+            .collect();
 
-    print!("repeated_char {repeated_char:?}");
-    for anagram  in possible_anagrams{
-        let anagram_word =anagram.chars();
-        let mut anagram_set = HashSet::new();
-        anagram_word.for_each(|x| {anagram_set.insert(x);});
-        if word_set.iter().all(|w| anagram_set.contains(w)) && ((anagram_set.len()+repeated_char.len())==word_set.len()) {
-            result.insert(*anagram)
-        }else{
+        if (words.iter().collect::<Vec<&char>>() != anagram_word.iter().collect::<Vec<&char>>())
+            && words.iter().all(|w| anagram_word.contains(&w))
+            && words.len() == anagram_word.len()
+        {
+            result.insert(*anagram);
+            println!("{:?}", anagram_word);
+        } else {
             continue;
         };
-    };
+    }
     result
-}   
-
+}
 
 #[test]
 fn no_matches() {
