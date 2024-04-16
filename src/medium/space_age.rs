@@ -10,11 +10,13 @@ impl From<u64> for Duration {
     }
 }
 
+
 pub trait Planet {
     fn years_during(d: &Duration) -> f64 {
         todo!("convert a duration ({d:?}) to the number of years on this planet for that duration");
     }
 }
+
 
 pub struct Mercury;
 pub struct Venus;
@@ -36,7 +38,6 @@ impl Planet for Neptune {}
 
 
 
-use space_age::*;
 fn assert_in_delta(expected: f64, actual: f64) {
     let diff: f64 = (expected - actual).abs();
     let delta: f64 = 0.01;

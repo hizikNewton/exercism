@@ -3,16 +3,17 @@ use bob::bob_risky;
 use kg_garden::kindergarten_garden::plants;
 use matching_bracket::matching_brackets;
 use easy::sum_of_multiple::sum_of_multiples;
+use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::{anagram::anagrams_for};
+use medium::space_age;
 fn main() {
 
-    let word = "ΑΒΓ";
+    /* let word = "ΑΒΓ";
     let inputs = &["ΒΓΑ", "ΒΓΔ", "γβα", "αβγ"];
     let output = anagrams_for(word, inputs);
-    print!("the result {:?}",output)
+    print!("the result {:?}",output) */
   
 }
 
