@@ -8,8 +8,9 @@ use easy::sum_of_multiple::sum_of_multiples;
 pub mod medium;
 use medium::{anagram::anagrams_for};
 fn main() {
-    let word = "listen";
-    let inputs = &["enlists", "google", "inlets", "banana"];
+
+    let word = "ΑΒΓ";
+    let inputs = &["ΒΓΑ", "ΒΓΔ", "γβα", "αβγ"];
     let output = anagrams_for(word, inputs);
     print!("the result {:?}",output)
   
