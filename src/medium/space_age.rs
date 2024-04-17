@@ -2,11 +2,13 @@
 // In order to pass the tests you can add-to or change any of this code.
 
 #[derive(Debug)]
-pub struct Duration;
+pub struct Duration{
+    seconds:u64
+}
 
 impl From<u64> for Duration {
     fn from(s: u64) -> Self {
-        todo!("s, measured in seconds: {s}")
+        Duration::u64(s)
     }
 }
 
@@ -38,7 +40,7 @@ impl Planet for Neptune {}
 
 
 
-fn assert_in_delta(expected: f64, actual: f64) {
+pub fn assert_in_delta(expected: f64, actual: f64) {
     let diff: f64 = (expected - actual).abs();
     let delta: f64 = 0.01;
     if diff > delta {

@@ -10,10 +10,7 @@ pub mod medium;
 use medium::space_age;
 fn main() {
 
-    /* let word = "ΑΒΓ";
-    let inputs = &["ΒΓΑ", "ΒΓΔ", "γβα", "αβγ"];
-    let output = anagrams_for(word, inputs);
-    print!("the result {:?}",output) */
+    
   
 }
 
