@@ -7,10 +7,13 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::space_age;
+use medium::sublists;
 fn main() {
 
-    
+  let list_one: &[i32] = &[1, 1, 2];
+  let list_two: &[i32] = &[0, 1, 1, 1, 2, 1, 2];
+  let output = sublists::sublist(list_one, list_two);
+  print!("output yeahh {:?}",output);
   
 }
 
