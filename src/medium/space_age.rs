@@ -2,25 +2,27 @@
 // In order to pass the tests you can add-to or change any of this code.
 
 #[derive(Debug)]
-pub struct Duration{
-    seconds:u64
+pub struct Duration {
+    seconds: f64,
 }
 
 impl From<u64> for Duration {
     fn from(s: u64) -> Self {
-        Duration::u64(s)
+        Duration { seconds: s as f64 }
     }
 }
-
 
 pub trait Planet {
+    const ORBITAL_PERIOD: f64;
     fn years_during(d: &Duration) -> f64 {
-        todo!("convert a duration ({d:?}) to the number of years on this planet for that duration");
+        let res = d.seconds / Self::ORBITAL_PERIOD;
+        res as f64
     }
 }
 
-
-pub struct Mercury;
+pub struct Mercury {
+    orbital_period: f64,
+}
 pub struct Venus;
 pub struct Earth;
 pub struct Mars;
@@ -29,16 +31,30 @@ pub struct Saturn;
 pub struct Uranus;
 pub struct Neptune;
 
-impl Planet for Mercury {}
-impl Planet for Venus {}
-impl Planet for Earth {}
-impl Planet for Mars {}
-impl Planet for Jupiter {}
-impl Planet for Saturn {}
-impl Planet for Uranus {}
-impl Planet for Neptune {}
-
-
+impl Planet for Mercury {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Venus {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Earth {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Mars {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Jupiter {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Saturn {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Uranus {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
+impl Planet for Neptune {
+    const ORBITAL_PERIOD: f64 = 0.2408467;
+}
 
 pub fn assert_in_delta(expected: f64, actual: f64) {
     let diff: f64 = (expected - actual).abs();
