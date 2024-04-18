@@ -15,14 +15,12 @@ impl From<u64> for Duration {
 pub trait Planet {
     const ORBITAL_PERIOD: f64;
     fn years_during(d: &Duration) -> f64 {
-        let res = d.seconds / Self::ORBITAL_PERIOD;
+        let res = d.seconds / (Self::ORBITAL_PERIOD * 365.25*60.0*60.0*24.0);
         res as f64
     }
 }
 
-pub struct Mercury {
-    orbital_period: f64,
-}
+pub struct Mercury;
 pub struct Venus;
 pub struct Earth;
 pub struct Mars;
@@ -35,25 +33,25 @@ impl Planet for Mercury {
     const ORBITAL_PERIOD: f64 = 0.2408467;
 }
 impl Planet for Venus {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 0.61519726;
 }
 impl Planet for Earth {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 1.0;
 }
 impl Planet for Mars {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 1.8808158;
 }
 impl Planet for Jupiter {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 11.862615;
 }
 impl Planet for Saturn {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 29.447498;
 }
 impl Planet for Uranus {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 84.016846;
 }
 impl Planet for Neptune {
-    const ORBITAL_PERIOD: f64 = 0.2408467;
+    const ORBITAL_PERIOD: f64 = 164.79132;
 }
 
 pub fn assert_in_delta(expected: f64, actual: f64) {
@@ -72,7 +70,6 @@ fn age_on_earth() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_mercury() {
     let seconds = 2134835688;
     let duration = Duration::from(seconds);
@@ -81,7 +78,6 @@ fn age_on_mercury() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_venus() {
     let seconds = 189839836;
     let duration = Duration::from(seconds);
@@ -90,7 +86,6 @@ fn age_on_venus() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_mars() {
     let seconds = 2129871239;
     let duration = Duration::from(seconds);
@@ -99,7 +94,6 @@ fn age_on_mars() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_jupiter() {
     let seconds = 901876382;
     let duration = Duration::from(seconds);
@@ -108,7 +102,6 @@ fn age_on_jupiter() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_saturn() {
     let seconds = 2000000000;
     let duration = Duration::from(seconds);
@@ -117,7 +110,6 @@ fn age_on_saturn() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_uranus() {
     let seconds = 1210123456;
     let duration = Duration::from(seconds);
@@ -126,7 +118,6 @@ fn age_on_uranus() {
     assert_in_delta(expected, output);
 }
 #[test]
-#[ignore]
 fn age_on_neptune() {
     let seconds = 1821023456;
     let duration = Duration::from(seconds);
