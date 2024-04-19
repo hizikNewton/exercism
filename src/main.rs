@@ -7,18 +7,18 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::sublists;
+use medium::minesweep;
 fn main() {
 
-  let list_one: &[i32] = &[1, 1, 2];
-  let list_two: &[i32] = &[0, 1, 1, 1, 2, 1, 2];
-  let output = sublists::sublist(list_one, list_two);
-  print!("output yeahh {:?}",output);
-  
+    
 }
 
 
   /*
+  let list_one: &[i32] = &[1, 1, 2];
+  let list_two: &[i32] = &[0, 1, 1, 1, 2, 1, 2];
+  let output = sublists::sublist(list_one, list_two);
+  print!("output yeahh {:?}",output);
     let res = Clock::new(1, -40).to_string();
     print!("result is {res:?}");
     let res = sum_of_multiples::sum_of_multiples(1,&[0]);
