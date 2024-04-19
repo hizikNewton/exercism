@@ -9,6 +9,7 @@ pub fn annotate(minefield: &[&str]) -> Vec<String> {
         if i!=0{
             let prev = minefield[i-1];
             let prev_row = prev.chars().collect::<Vec<char>>();
+            
             if let [ current,next] = j{
                let current_row = current.chars().collect::<Vec<char>>();
                let mut c_row_dup = current_row.clone();
