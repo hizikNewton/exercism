@@ -1,55 +1,91 @@
 pub fn annotate(minefield: &[&str]) -> Vec<String> {
-    let x:Vec<String> = Vec::new();
-    if minefield.is_empty(){
+    let x: Vec<String> = Vec::new();
+    if minefield.is_empty() {
         return x;
     }
     let mut count = 0;
-    let result:Vec<String> = Vec::new();
-    for (i,j) in minefield.windows(2).enumerate(){
-        if i!=0{
-            let prev = minefield[i-1];
-            let prev_row = prev.chars().collect::<Vec<char>>();
-            
-            if let [ current,next] = j{
-               let current_row = current.chars().collect::<Vec<char>>();
-               let mut c_row_dup = current_row.clone();
-               let next_row = next.chars().collect::<Vec<char>>();
-                for (i,ch) in current_row.iter().enumerate(){
-                    if *ch==' '{
-                        if current_row[i+1]=='*'{
-                            count+=1;
-                        }
-                        if current_row[i-1]=='*'{
-                            count+=1;
-                        }
-                        if next_row[i+1]=='*'{
-                            count+=1;
-                        }
-                        if next_row[i-1]=='*'{
-                            count+=1;
-                        }if prev_row[i+1]=='*'{
-                            count+=1;
-                        }
-                        if prev_row[i-1]=='*'{
-                            count+=1;
-                        }
-                    }else{
-                        continue;
-                    }
-                   c_row_dup[i] = char::from_u32(count).expect("were panick");
-                }
-                c_row_dup
-            }
-
-        }else{
-
+    let mut result: Vec<String> = Vec::new();
+    for (pos, j) in minefield.chunks(2).enumerate() {
+        let prev;
+        let next: &str;
+        if pos > 0 {
+            prev = Some(minefield[pos - 1]);
+        } else {
+            prev = None
         }
+        match j {
+            [current, next] => annotate_row(prev, current, Some(next)),
+            [current] => annotate_row(prev, current, None),
+        };
+        if let [current, next] = j {
+            let current_row = current.chars().collect::<Vec<char>>();
+            let mut c_row_dup = current_row.clone();
+            let next_row = next.chars().collect::<Vec<char>>();
 
+            for (i, ch) in current_row.iter().enumerate() {
+                if *ch == ' ' {
+                    if i < current_row.len() - 1 {
+                        if current_row[i + 1] == '*' {
+                            count += 1;
+                        }
+                        if next_row[i + 1] == '*' {
+                            count += 1;
+                        }
+                    }
+                    if i != 0 {
+                        if current_row[i - 1] == '*' {
+                            count += 1;
+                        }
+                        if next_row[i - 1] == '*' {
+                            count += 1;
+                        }
+                    }
+
+                    if pos != 0 {
+                        let prev = minefield[pos - 1];
+                        let prev_row = prev.chars().collect::<Vec<char>>();
+                        if i < prev_row.len() - 1 && prev_row[pos + 1] == '*' {
+                            count += 1;
+                        }
+                        if i > 0 && prev_row[pos - 1] == '*' {
+                            count += 1;
+                        }
+                    }
+                } else {
+                    continue;
+                }
+                c_row_dup[i] = char::from_digit(count, 10).unwrap();
+            }
+            result.push(c_row_dup.iter().collect::<String>());
+        }
     }
-    return x;
+    result
 }
 
-
+pub fn annotate_row(prev: Option<&str>, current: &str, next: Option<&str>) -> i32 {
+    let current_row = current.chars().collect::<Vec<char>>();
+    let mut count = 0;
+    for (i, ch) in current_row.iter().enumerate() {
+        if *ch == ' ' {
+            for ele in [prev, next, Some(current)] {
+                if let Some(ele) = ele {
+                    let current = ele.chars().collect::<Vec<char>>();
+                    print!("ele {current:?}");
+                    if current[i] == '*' {
+                        count += 1;
+                    }
+                    if current.len() > 1 && current[i + 1] == '*' {
+                        count += 1;
+                    }
+                    if i > 0 && current[i + 1] == '*' {
+                        count += 1
+                    }
+                }
+            }
+        }
+        return count;
+    }
+}
 
 pub fn remove_annotations(board: &[&str]) -> Vec<String> {
     board.iter().map(|r| remove_annotations_in_row(r)).collect()
