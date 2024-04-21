@@ -2,7 +2,7 @@
 pub fn is_valid(code: &str) -> bool {
     if code.chars().all(| x| x==' '|| x.is_ascii_digit() ){
      
-    let mut code:Vec<u32> = code.chars().filter_map(|ch| { ch.to_digit(10)} ).collect();
+    let mut code:Vec<u32> = code.trim_start_matches('0').chars().filter_map(|ch| { ch.to_digit(10)} ).collect();
     
     if code.len()<=1{
         return false;
