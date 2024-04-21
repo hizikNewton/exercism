@@ -7,25 +7,9 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::minesweep;
+use medium::luhn;
 fn main() {
-    let test_case = &["111", "1*1", "111"];
-    let cleaned = remove_annotations(test_case);
-    let cleaned_strs = cleaned.iter().map(|r| &r[..]).collect::<Vec<_>>();
-    println!("Alright {:?}", minesweep::annotate(&cleaned_strs));
-}
-
-pub fn remove_annotations(board: &[&str]) -> Vec<String> {
-    board.iter().map(|r| remove_annotations_in_row(r)).collect()
-}
-pub fn remove_annotations_in_row(row: &str) -> String {
-    row.as_bytes()
-        .iter()
-        .map(|&ch| match ch {
-            b'*' => '*',
-            _ => ' ',
-        })
-        .collect()
+luhn::is_valid("4539 3195 0343 6467");
 }
 
 /*
@@ -45,4 +29,20 @@ print!("output yeahh {:?}",output);
   println!("whattt {:?}",plants(diagram, student));
    let prime_factors = prime_factors::factors(93819012551);
   println!("{:?}",prime_factors);
-  println!("{:?}",bob_risky::reply("1, 2, 3 GO!"));*/
+  println!("{:?}",bob_risky::reply("1, 2, 3 GO!"));
+  
+  
+pub fn remove_annotations(board: &[&str]) -> Vec<String> {
+    board.iter().map(|r| remove_annotations_in_row(r)).collect()
+}
+pub fn remove_annotations_in_row(row: &str) -> String {
+    row.as_bytes()
+        .iter()
+        .map(|&ch| match ch {
+            b'*' => '*',
+            _ => ' ',
+        })
+        .collect()
+}
+
+  */

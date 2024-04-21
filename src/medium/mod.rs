@@ -3,4 +3,4 @@ pub mod anagram;
 pub mod space_age; 
 */
 
-pub mod minesweep;
+pub mod luhn;
