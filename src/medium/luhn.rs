@@ -1,27 +1,24 @@
 /// Check a Luhn checksum.
 pub fn is_valid(code: &str) -> bool {
-    if code.chars().all(| x| x==' '|| x.is_ascii_digit() ){
-     
-    let mut code:Vec<u32> = code.trim_start_matches('0').chars().filter_map(|ch| { ch.to_digit(10)} ).collect();
-    
-    if code.len()<=1{
+    if code.len() <= 1 {
         return false;
     }
-    for num in code.iter_mut().step_by(2){
-        if (*num*2)<9{
-            *num = *num*2;
-        }else{
-            *num = (*num*2)-9;
+    let mut code: Vec<char> = code.chars().collect();
+    if code.iter().all(|x| *x == ' ' || x.is_ascii_digit()) && code[0].is_ascii_digit() {
+        if code.len() % 2 != 0 && code.starts_with(&['0']) {
+            code.remove(0);
         }
-       
-    } 
-    let sum = code.iter().fold(0, |acc,x| {acc+x});
-    sum % 10 == 0 
-    }else{
+        let mut digits: Vec<u32> = code.iter().filter_map(|ch| ch.to_digit(10)).collect();
+
+        for num in digits.iter_mut().step_by(2) {
+            *num = if *num * 2 > 9 { *num * 2 - 9 } else { *num * 2 };
+        }
+        let sum = digits.iter().fold(0, |acc, x| acc + x);
+        sum % 10 == 0
+    } else {
         false
     }
 }
-
 
 pub fn process_valid_case(number: &str, is_luhn_expected: bool) {
     assert_eq!(is_valid(number), is_luhn_expected);

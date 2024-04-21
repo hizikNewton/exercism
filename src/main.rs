@@ -7,10 +7,8 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::luhn;
-fn main() {
-luhn::is_valid("59%59");
-}
+use medium::parrallel_letter_frequency;
+fn main() {}
 
 /*
 let list_one: &[i32] = &[1, 1, 2];
@@ -30,8 +28,8 @@ print!("output yeahh {:?}",output);
    let prime_factors = prime_factors::factors(93819012551);
   println!("{:?}",prime_factors);
   println!("{:?}",bob_risky::reply("1, 2, 3 GO!"));
-  
-  
+
+
 pub fn remove_annotations(board: &[&str]) -> Vec<String> {
     board.iter().map(|r| remove_annotations_in_row(r)).collect()
 }
