@@ -1,5 +1,7 @@
 /// Check a Luhn checksum.
 pub fn is_valid(code: &str) -> bool {
+    if code.chars().all(| x| x==' '|| x.is_ascii_digit() ){
+     
     let mut code:Vec<u32> = code.chars().filter_map(|ch| { ch.to_digit(10)} ).collect();
     
     if code.len()<=1{
@@ -15,6 +17,9 @@ pub fn is_valid(code: &str) -> bool {
     } 
     let sum = code.iter().fold(0, |acc,x| {acc+x});
     sum % 10 == 0 
+    }else{
+        false
+    }
 }
 
 

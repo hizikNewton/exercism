@@ -9,7 +9,7 @@ use medium::{anagram::anagrams_for};
 pub mod medium;
 use medium::luhn;
 fn main() {
-luhn::is_valid("4539 3195 0343 6467");
+luhn::is_valid("59%59");
 }
 
 /*
