@@ -1,16 +1,45 @@
 use std::collections::HashMap;
 
-pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
-    todo!(
-        "Count the frequency of letters in the given input '{input:?}'. Ensure that you are using {} to process the input.",
-        match worker_count {
-            1 => "1 worker".to_string(),
-            _ => format!("{worker_count} workers"),
+
+pub mod frequency{
+    use std::collections::HashMap;
+    use std::sync::Arc;
+    use std::{thread, io};
+
+pub fn frequency<'a>(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
+    let result:HashMap<char, usize> = HashMap::new();
+    let mut work_lists = input.chunks(worker_count).collect::<Vec<_>>();
+
+    let mut thread_handles = vec![];
+
+    for worklist in work_lists {
+            thread_handles.push(thread::spawn(move || process_files(worklist)));
         }
-    );
+    
+    for handle in thread_handles {
+        handle.join().unwrap();
+    }
+
+    result
+
 }
 
-use parallel_letter_frequency as frequency;
+pub fn process_files(input: &[&str])->HashMap<char, usize>{
+    let result:HashMap<char, usize> = HashMap::new();
+    result
+}
+
+pub fn split_vec_into_chunks<'a>(input: Arc<& 'a[&str]>, worker_count: usize)-> Vec<&'a[&'a str]>{
+    if input.is_empty(){
+       return Vec::new();
+    }
+    let result = input.chunks(worker_count).collect::<Vec<_>>();
+    result
+}
+
+}
+
+
 // Poem by Friedrich Schiller. The corresponding music is the European Anthem.
 const ODE_AN_DIE_FREUDE: [&str; 8] = [
     "Freude schöner Götterfunken",
