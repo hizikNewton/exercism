@@ -7,8 +7,17 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use medium::parrallel_letter_frequency;
-fn main() {}
+use std::collections::HashMap;
+
+use medium::parrallel_letter_frequency::frequency;
+fn main() {
+  let v = vec!["abc"; 1000];
+  let mut hm = HashMap::new();
+  hm.insert('a', 1000);
+  hm.insert('b', 1000);
+  hm.insert('c', 1000);
+  print!("hello {:?}", frequency::frequency(&v[..], 4))
+}
 
 /*
 let list_one: &[i32] = &[1, 1, 2];
