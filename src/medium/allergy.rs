@@ -1,5 +1,4 @@
-Instructions
-Given a person's allergy score, determine whether or not they're allergic to a given item, and their full list of allergies.
+/* Given a person's allergy score, determine whether or not they're allergic to a given item, and their full list of allergies.
 
 An allergy test produces a single numeric score which contains the information about all the allergies the person has (that they were tested for).
 
@@ -20,40 +19,74 @@ Now, given just that score of 34, your program should be able to say:
 Whether Tom is allergic to any one of those allergens listed above.
 All the allergens Tom is allergic to.
 Note: a given score may include allergens not listed above (i.e. allergens that score 256, 512, 1024, etc.). Your program should ignore those components of the score. For example, if the allergy score is 257, your program should only report the eggs (1) allergy.
+ */
+pub mod allergies{
+    use std::slice::Iter;
 
+pub struct Allergies{
+    score:u32
+}
 
-pub struct Allergies;
-
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq,Clone, Copy)]
 pub enum Allergen {
-    Eggs,
-    Peanuts,
-    Shellfish,
-    Strawberries,
-    Tomatoes,
-    Chocolate,
-    Pollen,
-    Cats,
+    Eggs = 1,
+    Peanuts = 2,
+    Shellfish = 4,
+    Strawberries = 8,
+    Tomatoes = 16,
+    Chocolate = 32,
+    Pollen = 64,
+    Cats = 128,
+}
+impl Allergen {
+    pub fn iterator()->Iter<'static, Allergen>{
+        static ALLERGENS:[Allergen;8] = [
+            Allergen::Eggs,
+            Allergen::Peanuts,
+            Allergen::Shellfish,
+            Allergen::Strawberries,
+            Allergen::Tomatoes,
+            Allergen::Chocolate,
+            Allergen::Pollen,
+            Allergen::Cats
+        ];
+        ALLERGENS.iter()
+    }
 }
 
 impl Allergies {
     pub fn new(score: u32) -> Self {
-        todo!("Given the '{score}' score, construct a new Allergies struct.");
+        Allergies{
+            score
+        }
     }
 
     pub fn is_allergic_to(&self, allergen: &Allergen) -> bool {
-        todo!("Determine if the patient is allergic to the '{allergen:?}' allergen.");
+        let allergens = self.allergies();
+        allergens.contains(allergen)
     }
 
     pub fn allergies(&self) -> Vec<Allergen> {
-        todo!("Return the list of allergens contained within the score with which the Allergies struct was made.");
+        let mut res = Vec::new();
+        let mut current_score = self.score;
+        while current_score>255{
+            current_score-=256
+        }
+        for i in Allergen::iterator().rev(){
+            let allergen_score = *i as u32;
+            if current_score>=allergen_score{
+                current_score-=allergen_score;
+                res.push(*i)
+            }
+        } 
+        res
     }
+}
 }
 
 
-
 use allergies::*;
-fn compare_allergy_vectors(expected: &[Allergen], actual: &[Allergen]) {
+pub fn compare_allergy_vectors(expected: &[Allergen], actual: &[Allergen]) {
     for element in expected {
         if !actual.contains(element) {
             panic!("Allergen missing\n  {element:?} should be in {actual:?}");
@@ -71,283 +104,237 @@ fn not_allergic_to_anything_eggs() {
     assert!(!allergies.is_allergic_to(&Allergen::Eggs))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_eggs_eggs() {
     let allergies = Allergies::new(1);
     assert!(allergies.is_allergic_to(&Allergen::Eggs))
 }
 #[test]
-#[ignore]
 fn allergic_to_eggs_and_something_else_eggs() {
     let allergies = Allergies::new(3);
     assert!(allergies.is_allergic_to(&Allergen::Eggs))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_eggs_eggs() {
     let allergies = Allergies::new(2);
     assert!(!allergies.is_allergic_to(&Allergen::Eggs))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_eggs() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Eggs))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_peanuts() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Peanuts))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_peanuts_peanuts() {
     let allergies = Allergies::new(2);
     assert!(allergies.is_allergic_to(&Allergen::Peanuts))
 }
 #[test]
-#[ignore]
 fn allergic_to_peanuts_and_something_else_peanuts() {
     let allergies = Allergies::new(7);
     assert!(allergies.is_allergic_to(&Allergen::Peanuts))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_peanuts_peanuts() {
     let allergies = Allergies::new(5);
     assert!(!allergies.is_allergic_to(&Allergen::Peanuts))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_peanuts() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Peanuts))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_shellfish() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Shellfish))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_shellfish_shellfish() {
     let allergies = Allergies::new(4);
     assert!(allergies.is_allergic_to(&Allergen::Shellfish))
 }
 #[test]
-#[ignore]
 fn allergic_to_shellfish_and_something_else_shellfish() {
     let allergies = Allergies::new(14);
     assert!(allergies.is_allergic_to(&Allergen::Shellfish))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_shellfish_shellfish() {
     let allergies = Allergies::new(10);
     assert!(!allergies.is_allergic_to(&Allergen::Shellfish))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_shellfish() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Shellfish))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_strawberries() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Strawberries))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_strawberries_strawberries() {
     let allergies = Allergies::new(8);
     assert!(allergies.is_allergic_to(&Allergen::Strawberries))
 }
 #[test]
-#[ignore]
 fn allergic_to_strawberries_and_something_else_strawberries() {
     let allergies = Allergies::new(28);
     assert!(allergies.is_allergic_to(&Allergen::Strawberries))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_strawberries_strawberries() {
     let allergies = Allergies::new(20);
     assert!(!allergies.is_allergic_to(&Allergen::Strawberries))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_strawberries() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Strawberries))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_tomatoes() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Tomatoes))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_tomatoes_tomatoes() {
     let allergies = Allergies::new(16);
     assert!(allergies.is_allergic_to(&Allergen::Tomatoes))
 }
 #[test]
-#[ignore]
 fn allergic_to_tomatoes_and_something_else_tomatoes() {
     let allergies = Allergies::new(56);
     assert!(allergies.is_allergic_to(&Allergen::Tomatoes))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_tomatoes_tomatoes() {
     let allergies = Allergies::new(40);
     assert!(!allergies.is_allergic_to(&Allergen::Tomatoes))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_tomatoes() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Tomatoes))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_chocolate() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Chocolate))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_chocolate_chocolate() {
     let allergies = Allergies::new(32);
     assert!(allergies.is_allergic_to(&Allergen::Chocolate))
 }
 #[test]
-#[ignore]
 fn allergic_to_chocolate_and_something_else_chocolate() {
     let allergies = Allergies::new(112);
     assert!(allergies.is_allergic_to(&Allergen::Chocolate))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_chocolate_chocolate() {
     let allergies = Allergies::new(80);
     assert!(!allergies.is_allergic_to(&Allergen::Chocolate))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_chocolate() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Chocolate))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_pollen() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Pollen))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_pollen_pollen() {
     let allergies = Allergies::new(64);
     assert!(allergies.is_allergic_to(&Allergen::Pollen))
 }
 #[test]
-#[ignore]
 fn allergic_to_pollen_and_something_else_pollen() {
     let allergies = Allergies::new(224);
     assert!(allergies.is_allergic_to(&Allergen::Pollen))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_pollen_pollen() {
     let allergies = Allergies::new(160);
     assert!(!allergies.is_allergic_to(&Allergen::Pollen))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_pollen() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Pollen))
 }
 #[test]
-#[ignore]
 fn not_allergic_to_anything_cats() {
     let allergies = Allergies::new(0);
     assert!(!allergies.is_allergic_to(&Allergen::Cats))
 }
 #[test]
-#[ignore]
 fn allergic_only_to_cats_cats() {
     let allergies = Allergies::new(128);
     assert!(allergies.is_allergic_to(&Allergen::Cats))
 }
 #[test]
-#[ignore]
 fn allergic_to_cats_and_something_else_cats() {
     let allergies = Allergies::new(192);
     assert!(allergies.is_allergic_to(&Allergen::Cats))
 }
 #[test]
-#[ignore]
 fn allergic_to_something_but_not_cats_cats() {
     let allergies = Allergies::new(64);
     assert!(!allergies.is_allergic_to(&Allergen::Cats))
 }
 #[test]
-#[ignore]
 fn allergic_to_everything_cats() {
     let allergies = Allergies::new(255);
     assert!(allergies.is_allergic_to(&Allergen::Cats))
 }
 #[test]
-#[ignore]
 fn no_allergies() {
     let allergies = Allergies::new(0).allergies();
     let expected = &[];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn just_eggs() {
     let allergies = Allergies::new(1).allergies();
     let expected = &[Allergen::Eggs];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn just_peanuts() {
     let allergies = Allergies::new(2).allergies();
     let expected = &[Allergen::Peanuts];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn just_strawberries() {
     let allergies = Allergies::new(8).allergies();
     let expected = &[Allergen::Strawberries];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn eggs_and_peanuts() {
     let allergies = Allergies::new(3).allergies();
     let expected = &[Allergen::Eggs, Allergen::Peanuts];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn more_than_eggs_but_not_peanuts() {
     let allergies = Allergies::new(5).allergies();
     let expected = &[Allergen::Eggs, Allergen::Shellfish];
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn lots_of_stuff() {
     let allergies = Allergies::new(248).allergies();
     let expected = &[
@@ -360,7 +347,6 @@ fn lots_of_stuff() {
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn everything() {
     let allergies = Allergies::new(255).allergies();
     let expected = &[
@@ -376,7 +362,6 @@ fn everything() {
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn no_allergen_score_parts() {
     let allergies = Allergies::new(509).allergies();
     let expected = &[
@@ -391,7 +376,6 @@ fn no_allergen_score_parts() {
     compare_allergy_vectors(expected, &allergies);
 }
 #[test]
-#[ignore]
 fn no_allergen_score_parts_without_highest_valid_score() {
     let allergies = Allergies::new(257).allergies();
     let expected = &[Allergen::Eggs];
