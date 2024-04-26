@@ -52,17 +52,6 @@ impl Allergies {
 
 
 
-[package]
-edition = "2021"
-name = "allergies"
-version = "1.1.0"
-
-
-Stuck? Get help
-
-Run Tests
-
-Submit
 use allergies::*;
 fn compare_allergy_vectors(expected: &[Allergen], actual: &[Allergen]) {
     for element in expected {
