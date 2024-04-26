@@ -7,16 +7,14 @@ use medium::{anagram::anagrams_for};
 */
 
 pub mod medium;
-use std::collections::HashMap;
 
-use medium::parrallel_letter_frequency::frequency;
+use medium::all_your_base;
 fn main() {
-  let v = vec!["abc"; 1000];
-  let mut hm = HashMap::new();
-  hm.insert('a', 1000);
-  hm.insert('b', 1000);
-  hm.insert('c', 1000);
-  print!("hello {:?}", frequency::frequency(&v[..], 4))
+    let input_base = 10;
+    let input_digits = &[5];
+    let output_base = 2;
+    let res = all_your_base::allyourbase::convert(input_digits, input_base, output_base);
+    print!("okay  {:?}", res);
 }
 
 /*

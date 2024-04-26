@@ -1,69 +1,67 @@
-#[derive(Debug, PartialEq, Eq)]
-pub enum Error {
-    InvalidInputBase,
-    InvalidOutputBase,
-    InvalidDigit(u32),
+pub mod allyourbase {
+    use std::vec;
+
+    #[derive(Debug, PartialEq, Eq)]
+    pub enum Error {
+        InvalidInputBase,
+        InvalidOutputBase,
+        InvalidDigit(u32),
+    }
+    pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>, Error> {
+        if to_base < 2 {
+            return Err(Error::InvalidOutputBase);
+        }
+        if from_base < 2 {
+            return Err(Error::InvalidInputBase);
+        }
+        if let Some(x) = number.iter().find(|num| *num >= &from_base) {
+            return Err(Error::InvalidDigit(*x));
+        }
+        let mut v = Vec::new();
+        let mut base_10: Vec<u32> = number.to_vec();
+        if number.iter().all(|num| *num == 0) {
+            v.push(0);
+            return Ok(v);
+        }
+        if from_base != 10 {
+            base_10 = to_base_10(number.to_vec(), from_base)
+                .to_string()
+                .chars()
+                .map(|x| x.to_digit(10).unwrap())
+                .collect();
+        }
+        if to_base != 10 {
+            return Ok(to_other_base_aside_10(&base_10, to_base));
+        }
+        return Ok(base_10);
+    }
+
+    pub fn to_base_10(number: Vec<u32>, to_base: u32) -> u32 {
+        let to_base_10 = number
+            .iter()
+            .rev()
+            .enumerate()
+            .fold(0, |acc: u32, (idx, num)| {
+                acc + num * (to_base.pow(idx as u32))
+            });
+        to_base_10
+    }
+
+    pub fn to_other_base_aside_10(number: &[u32], other_base: u32) -> Vec<u32> {
+        let mut num: u32 = number
+            .iter()
+            .fold("".to_string(), |acc: String, e| acc + &e.to_string())
+            .parse()
+            .unwrap();
+        let mut to_other_base = Vec::new();
+        while num != 0 {
+            to_other_base.push(num % other_base);
+            num = num / other_base;
+        }
+        to_other_base.reverse();
+        to_other_base
+    }
 }
-
-///
-/// Convert a number between two bases.
-///
-/// A number is any slice of digits.
-/// A digit is any unsigned integer (e.g. u8, u16, u32, u64, or usize).
-/// Bases are specified as unsigned integers.
-///
-/// Return the corresponding Error enum if the conversion is impossible.
-///
-///
-/// You are allowed to change the function signature as long as all test still pass.
-///
-///
-/// Example:
-/// Input
-///   number: &[4, 2]
-///   from_base: 10
-///   to_base: 2
-/// Result
-///   Ok(vec![1, 0, 1, 0, 1, 0])
-///
-/// The example corresponds to converting the number 42 from decimal
-/// which is equivalent to 101010 in binary.
-///
-///
-/// Notes:
-///  * The empty slice ( "[]" ) is equal to the number 0.
-///  * Never output leading 0 digits, unless the input number is 0, in which the output must be `[0]`.
-///    However, your function must be able to process input with leading 0 digits.
-///
-pub fn convert(number: &[u32], from_base: u32, to_base: u32) -> Result<Vec<u32>, Error> {
-    todo!("Convert {number:?} from base {from_base} to base {to_base}")
-}
-
-
-Introduction
-You've just been hired as professor of mathematics. Your first week went well, but something is off in your second week. The problem is that every answer given by your students is wrong! Luckily, your math skills have allowed you to identify the problem: the student answers are correct, but they're all in base 2 (binary)! Amazingly, it turns out that each week, the students use a different base. To help you quickly verify the student answers, you'll be building a tool to translate between bases.
-
-Instructions
-Convert a sequence of digits in one base, representing a number, into a sequence of digits in another base, representing the same number.
-
-About Positional Notation
-In positional notation, a number in base b can be understood as a linear combination of powers of b.
-
-The number 42, in base 10, means:
-
-(4 × 10¹) + (2 × 10⁰)
-
-The number 101010, in base 2, means:
-
-(1 × 2⁵) + (0 × 2⁴) + (1 × 2³) + (0 × 2²) + (1 × 2¹) + (0 × 2⁰)
-
-The number 1120, in base 3, means:
-
-(1 × 3³) + (1 × 3²) + (2 × 3¹) + (0 × 3⁰)
-
-Yes. Those three numbers above are exactly the same. Congratulations!
-
-
 use allyourbase as ayb;
 #[test]
 fn single_bit_one_to_decimal() {
@@ -77,7 +75,6 @@ fn single_bit_one_to_decimal() {
     );
 }
 #[test]
-#[ignore]
 fn binary_to_single_decimal() {
     let input_base = 2;
     let input_digits = &[1, 0, 1];
@@ -89,7 +86,6 @@ fn binary_to_single_decimal() {
     );
 }
 #[test]
-#[ignore]
 fn single_decimal_to_binary() {
     let input_base = 10;
     let input_digits = &[5];
@@ -101,7 +97,6 @@ fn single_decimal_to_binary() {
     );
 }
 #[test]
-#[ignore]
 fn binary_to_multiple_decimal() {
     let input_base = 2;
     let input_digits = &[1, 0, 1, 0, 1, 0];
@@ -113,7 +108,6 @@ fn binary_to_multiple_decimal() {
     );
 }
 #[test]
-#[ignore]
 fn decimal_to_binary() {
     let input_base = 10;
     let input_digits = &[4, 2];
@@ -125,7 +119,6 @@ fn decimal_to_binary() {
     );
 }
 #[test]
-#[ignore]
 fn trinary_to_hexadecimal() {
     let input_base = 3;
     let input_digits = &[1, 1, 2, 0];
@@ -137,7 +130,6 @@ fn trinary_to_hexadecimal() {
     );
 }
 #[test]
-#[ignore]
 fn hexadecimal_to_trinary() {
     let input_base = 16;
     let input_digits = &[2, 10];
@@ -149,7 +141,6 @@ fn hexadecimal_to_trinary() {
     );
 }
 #[test]
-#[ignore]
 fn fifteen_bit_integer() {
     let input_base = 97;
     let input_digits = &[3, 46, 60];
@@ -161,7 +152,6 @@ fn fifteen_bit_integer() {
     );
 }
 #[test]
-#[ignore]
 fn empty_list() {
     let input_base = 2;
     let input_digits = &[];
@@ -173,7 +163,6 @@ fn empty_list() {
     );
 }
 #[test]
-#[ignore]
 fn single_zero() {
     let input_base = 10;
     let input_digits = &[0];
@@ -185,7 +174,6 @@ fn single_zero() {
     );
 }
 #[test]
-#[ignore]
 fn multiple_zeros() {
     let input_base = 10;
     let input_digits = &[0, 0, 0];
@@ -197,7 +185,6 @@ fn multiple_zeros() {
     );
 }
 #[test]
-#[ignore]
 fn leading_zeros() {
     let input_base = 7;
     let input_digits = &[0, 6, 0];
@@ -209,7 +196,6 @@ fn leading_zeros() {
     );
 }
 #[test]
-#[ignore]
 fn invalid_positive_digit() {
     let input_base = 2;
     let input_digits = &[1, 2, 1, 0, 1, 0];
@@ -220,7 +206,6 @@ fn invalid_positive_digit() {
     );
 }
 #[test]
-#[ignore]
 fn input_base_is_one() {
     let input_base = 1;
     let input_digits = &[];
@@ -231,7 +216,6 @@ fn input_base_is_one() {
     );
 }
 #[test]
-#[ignore]
 fn output_base_is_one() {
     let input_base = 2;
     let input_digits = &[1, 0, 1, 0, 1, 0];
@@ -242,7 +226,6 @@ fn output_base_is_one() {
     );
 }
 #[test]
-#[ignore]
 fn input_base_is_zero() {
     let input_base = 0;
     let input_digits = &[];
@@ -253,7 +236,6 @@ fn input_base_is_zero() {
     );
 }
 #[test]
-#[ignore]
 fn output_base_is_zero() {
     let input_base = 10;
     let input_digits = &[7];

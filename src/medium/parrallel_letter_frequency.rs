@@ -1,71 +1,66 @@
+pub mod frequency {
+    use std::collections::HashMap;
+    use std::thread;
 
-pub mod frequency{
-    use std::collections::{ HashMap};
-    use std::sync::Arc;
-    use std::{thread};
+    pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
+        let mut result: HashMap<char, usize> = HashMap::new();
 
-pub fn frequency(input: &[&str], worker_count: usize) -> HashMap<char, usize> {
-    let mut result:HashMap<char, usize> = HashMap::new();
+        if input.is_empty() {
+            return result;
+        }
 
-    if input.is_empty(){
-        return result;
-    }
+        let worklists = create_chunk(input, worker_count);
 
-    let worklists = create_chunk(input, worker_count);
+        let mut thread_handles = vec![];
 
-    let mut thread_handles = vec![];
-
-    for worklist in worklists{
+        for worklist in worklists {
             thread_handles.push(thread::spawn(move || process_files(worklist)));
         }
-    
-    for handle in thread_handles {
-        let res = handle.join().unwrap();
-        res.keys().for_each(|k| {
-            match result.get(k) {
-                Some(count)=>result.insert(*k, res.get(k).unwrap()+count),
-                None=>result.insert(*k, *res.get(k).unwrap())
-            };
-        })
+
+        for handle in thread_handles {
+            let res = handle.join().unwrap();
+            res.keys().for_each(|k| {
+                match result.get(k) {
+                    Some(count) => result.insert(*k, res.get(k).unwrap() + count),
+                    None => result.insert(*k, *res.get(k).unwrap()),
+                };
+            })
+        }
+
+        result
     }
 
-    result
+    fn create_chunk(input: &[&str], worker_count: usize) -> Vec<Vec<String>> {
+        // Clone the input slice into owned data to avoid lifetime issues
+        let input_owned: Vec<String> = input.iter().map(|&s| s.to_string()).collect();
 
-}
-
-fn create_chunk(input: &[&str], worker_count: usize) -> Vec<Vec<String>> {
-    // Clone the input slice into owned data to avoid lifetime issues
-    let input_owned: Vec<String> = input.iter().map(|&s| s.to_string()).collect();
-    if input_owned.len()>worker_count{
-    let chunk_size = input_owned.len() / worker_count;
-    input_owned
-        .chunks(chunk_size) // Split the input into chunks
-        .map(|chunk| chunk.to_vec()) // Convert each chunk into a vector
-        .collect() }
-    }// Collect the vectors into a vector of vectors
-}
-
-pub fn process_files(input: Vec<String>)->HashMap<char, usize>{
-   
-    let mut hash_map:HashMap<char, usize> = HashMap::new();
-     input.iter().for_each(|str| str.to_lowercase().chars().for_each( |ch| {
-        match hash_map.get(&ch) {
-            Some(count)=>hash_map.insert(ch, count+1),
-            None=>hash_map.insert(ch, 1_usize)
+        let chunk_size = if input_owned.len() > worker_count {
+            input_owned.len() / worker_count
+        } else {
+            1
         };
+        input_owned
+            .chunks(chunk_size) // Split the input into chunks
+            .map(|chunk| chunk.to_vec()) // Convert each chunk into a vector
+            .collect()
     }
-    ));
-    hash_map
-}
+    // Collect the vectors into a vector of vectors
 
-pub fn split_vec_into_chunks<'a>(input: Arc<& 'a[&str]>, worker_count: usize)-> Vec<&'a[&'a str]>{
-    if input.is_empty(){
-       return Vec::new();
+    pub fn process_files(input: Vec<String>) -> HashMap<char, usize> {
+        let mut hash_map: HashMap<char, usize> = HashMap::new();
+        input.iter().for_each(|str| {
+            str.to_lowercase()
+                .chars()
+                .filter(|ch| ch.is_alphabetic())
+                .for_each(|ch| {
+                    match hash_map.get(&ch) {
+                        Some(count) => hash_map.insert(ch, count + 1),
+                        None => hash_map.insert(ch, 1_usize),
+                    };
+                })
+        });
+        hash_map
     }
-    let result = input.chunks(worker_count).collect::<Vec<_>>();
-    result
-}
-
 }
 
 use std::collections::HashMap;
