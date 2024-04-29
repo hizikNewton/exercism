@@ -61,7 +61,7 @@ pub mod alphametics{
             for row in boxed{
                 if row.contains(key){
                     if let Some(v) = input_map.get(key).unwrap(){
-
+                        
                     }
                 }
             }
