@@ -56,10 +56,14 @@ pub mod alphametics{
 
     }
 
-    pub fn do_replacement(boxed:Vec<Vec<char>>,input_map:&mut HashMap<char, Option<u32>> ){
-        for key in input_map.keys().collect::<Vec<char>>(){
+    pub fn do_replacement(boxed:&Vec<Vec<char>>,input_map:&mut HashMap<char, Option<u32>> ){
+        for key in input_map.keys(){
             for row in boxed{
+                if row.contains(key){
+                    if let Some(v) = input_map.get(key).unwrap(){
 
+                    }
+                }
             }
         }
     }
