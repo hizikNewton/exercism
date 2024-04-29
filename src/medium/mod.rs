@@ -6,5 +6,5 @@ pub mod parrallel_letter_frequency;
 pub mod all_your_base;
 */
 
-pub mod allergy;
+pub mod alphametics;
 

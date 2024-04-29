@@ -5,12 +5,19 @@ use matching_bracket::matching_brackets;
 use easy::sum_of_multiple::sum_of_multiples;
 use medium::{anagram::anagrams_for};
 use medium::all_your_base;
+use medium::allergy::{allergies::{Allergen, Allergies}, compare_allergy_vectors};
 */
 
 pub mod medium;
-use medium::allergy::{allergies::{Allergen, Allergies}, compare_allergy_vectors};
+use medium::alphametics::alphametics;
 fn main() {
-    let allergies = Allergies::new(509).allergies();
+    let puzzle = "I + BB == ILL";
+    alphametics::solve(puzzle);
+}
+
+/*
+
+let allergies = Allergies::new(509).allergies();
     let expected = &[
         Allergen::Eggs,
         Allergen::Shellfish,
@@ -21,11 +28,6 @@ fn main() {
         Allergen::Cats,
     ];
     print!("hello bruv {allergies:?}")
-}
-
-/*
-
-
 let input_base = 10;
 let input_digits = &[5];
 let output_base = 2;

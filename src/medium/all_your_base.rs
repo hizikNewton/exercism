@@ -1,5 +1,4 @@
 pub mod allyourbase {
-    use std::vec;
 
     #[derive(Debug, PartialEq, Eq)]
     pub enum Error {
