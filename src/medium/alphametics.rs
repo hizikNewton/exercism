@@ -62,7 +62,7 @@ pub mod alphametics {
                         .filter(|x| x.is_alphabetic())
                         .collect::<Vec<char>>();
                     match opv {
-                        [just_one] if just_one != sc_rv => {
+                        [just_one] if just_one != nc_rv => {
                             do_replacement(&mut boxed, vec![(just_one, '9'), (sc_rv, '0')]);
                             remove(&[0, 9], possible_value)
                         }
