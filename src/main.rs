@@ -11,7 +11,7 @@ use medium::allergy::{allergies::{Allergen, Allergies}, compare_allergy_vectors}
 pub mod medium;
 use medium::alphametics::alphametics;
 fn main() {
-    let puzzle = "I + BB == ILL";
+    let puzzle = "SEND + MORE == MONEY";
     alphametics::solve(puzzle);
 }
 

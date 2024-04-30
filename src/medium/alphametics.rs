@@ -1,70 +1,99 @@
 use std::collections::HashMap;
 
-pub mod alphametics{
+pub mod alphametics {
     use std::{collections::HashMap, result};
-    pub fn solve(input: &str) ->  Option<HashMap<char, u8>>{
-        let mut input_map:HashMap<char, Option<u32>> = HashMap::new();
+    pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
+        let mut input_map: HashMap<char, Vec<u32>> = HashMap::new();
 
-        let input =input.to_string();
-        for i in input.chars(){
-            if i.is_alphabetic(){
-            input_map.insert(i, None);
-            }
-        }
+        let input = input.to_string();
+        // input.chars().filter(|ch| ch.is_alphabetic());
+        input_map.insert('#', (0..=9).collect());
         let values = input.split("==").collect::<Vec<&str>>();
         let ops = values[0].to_string();
-        let opv = ops.split("+").map(|i|i.trim()).collect::<Vec<&str>>();
+        let opv = ops.split("+").map(|i| i.trim()).collect::<Vec<&str>>();
         let result = values[1].trim();
 
-        for i in opv.chunks(2){
-            match i{
-                [val1,val2]=>deal(val1,val2,result,&mut input_map),
-                [last_val]=>print!("{:?}---",last_val),
-                _=>()
-            }
-        }
-        
+        deal(opv, result, &mut input_map);
+
         None
     }
 
-    pub fn deal(op1:&str,op2:&str,result:&str,input_map:&mut HashMap<char, Option<u32>> ){
-        let res = result.chars().collect::<Vec<char>>(); 
-        let op1 = op1.chars().collect::<Vec<char>>();
-        let op2 = op2.chars().collect::<Vec<char>>(); 
-        let mut boxed:Vec<Vec<char>> = Vec::new();
-
-        let result_len = res.len();
-        
-        if result_len>op1.len()||res.len()>op2.len(){
-            let mut box_op1 = vec!['#';result_len-op1.len()];
-            let mut box_op2 = vec!['#';result_len-op2.len()];
-            box_op1.extend_from_slice(&op1);
-            box_op2.extend_from_slice(&op2);
-            //there is carryover
-            input_map.insert(res[0], Some(1));
-
-            boxed = vec![
-                box_op1,
-                box_op2,
-                res
-            ];
-            
-           
-        print!("your map is{:?}",input_map);
+    pub fn deal(
+        operating_values: Vec<&str>,
+        result: &str,
+        possible_value: &mut HashMap<char, Vec<u32>>,
+    ) {
+        let mut boxed: Vec<Vec<char>> = Vec::new();
+        let res = result.chars().collect::<Vec<char>>();
+        let mut total_len = 0;
+        for i in operating_values {
+            let opv = i.chars().collect::<Vec<char>>();
+            let length_of_opv = opv.len();
+            if length_of_opv > total_len {
+                total_len = length_of_opv;
+            }
+            boxed.push(opv)
         }
 
+        let result_len = res.len();
 
+        if result_len > total_len {
+            for row in boxed.iter_mut() {
+                let mut box_op1 = vec!['#'; result_len - row.len()];
+                box_op1.extend_from_slice(&row);
+                *row = box_op1;
+            }
+
+            boxed.push(res.clone());
+
+            do_replacement(&mut boxed, vec![(&res[0], '1')]);
+            remove(&[1], possible_value);
+
+            for i in (0..total_len) {
+                //get second column
+                let next_col = boxed
+                    .iter()
+                    .map(|row| row[i])
+                    .filter(|ch| *ch != '#')
+                    .collect::<Vec<char>>();
+                if let Some((nc_rv, nc_opv)) = next_col.split_last() {}
+                let nc_rv = next_col_col.last().unwrap();
+
+                match nc_opv {
+                    [just_one] if just_one != sc_rv => {
+                        do_replacement(&mut boxed, vec![(just_one, '9'), (sc_rv, '0')]);
+                        remove(&[0, 9], possible_value)
+                    }
+
+                    _ => println!("None"),
+                };
+            }
+        }
+
+        println!("{possible_value:?}");
+
+        println!("{boxed:?}");
     }
 
-    pub fn do_replacement(boxed:&Vec<Vec<char>>,input_map:&mut HashMap<char, Option<u32>> ){
-        for key in input_map.keys(){
-            for row in boxed{
-                if row.contains(key){
-                    if let Some(v) = input_map.get(key).unwrap(){
-                        
-                    }
+    pub fn do_replacement(boxed: &mut Vec<Vec<char>>, replacement: Vec<(&char, char)>) {
+        for (key, value) in replacement.iter() {
+            for row in boxed.iter_mut() {
+                if row.contains(key) {
+                    row.iter_mut().for_each(|i| {
+                        if i == *key {
+                            *i = *value;
+                        };
+                    });
                 }
             }
+        }
+    }
+
+    pub fn remove(number: &[u32], possible_value: &mut HashMap<char, Vec<u32>>) {
+        let po = possible_value.get_mut(&'#').unwrap();
+        for i in number {
+            let idx = po.iter_mut().position(|x| x == i).unwrap();
+            po.remove(idx);
         }
     }
 }
