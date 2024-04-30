@@ -56,17 +56,20 @@ pub mod alphametics {
                     .map(|row| row[i])
                     .filter(|ch| *ch != '#')
                     .collect::<Vec<char>>();
-                if let Some((nc_rv, nc_opv)) = next_col.split_last() {}
-                let nc_rv = next_col_col.last().unwrap();
+                if let Some((nc_rv, nc_opv)) = next_col.split_last() {
+                    let opv = nc_opv
+                        .iter()
+                        .filter(|x| x.is_alphabetic())
+                        .collect::<Vec<char>>();
+                    match opv {
+                        [just_one] if just_one != sc_rv => {
+                            do_replacement(&mut boxed, vec![(just_one, '9'), (sc_rv, '0')]);
+                            remove(&[0, 9], possible_value)
+                        }
 
-                match nc_opv {
-                    [just_one] if just_one != sc_rv => {
-                        do_replacement(&mut boxed, vec![(just_one, '9'), (sc_rv, '0')]);
-                        remove(&[0, 9], possible_value)
-                    }
-
-                    _ => println!("None"),
-                };
+                        _ => println!("None"),
+                    };
+                }
             }
         }
 
