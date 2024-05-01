@@ -1,7 +1,12 @@
 use std::collections::HashMap;
 
 pub mod alphametics {
-    use std::{collections::HashMap, result};
+    use std::collections::HashMap;
+    enum result_range {
+        GreaterThan10,
+        LessThan10,
+        GreaterOrLesser,
+    }
     pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
         let mut input_map: HashMap<char, Vec<u32>> = HashMap::new();
 
@@ -25,15 +30,11 @@ pub mod alphametics {
     ) {
         let mut boxed: Vec<Vec<char>> = Vec::new();
         let res = result.chars().collect::<Vec<char>>();
-        let mut total_len = 0;
-        for i in operating_values {
-            let opv = i.chars().collect::<Vec<char>>();
-            let length_of_opv = opv.len();
-            if length_of_opv > total_len {
-                total_len = length_of_opv;
-            }
-            boxed.push(opv)
-        }
+        let max_opv = *operating_values.iter().max_by_key(|x| x.len()).unwrap();
+        let total_len = max_opv.len();
+        operating_values
+            .iter()
+            .for_each(|i| boxed.push(i.chars().collect()));
 
         let result_len = res.len();
 
@@ -45,46 +46,77 @@ pub mod alphametics {
             }
 
             boxed.push(res.clone());
-
-            do_replacement(&mut boxed, vec![(&res[0], '1')]);
-            remove(&[1], possible_value);
-
-            for i in (0..total_len) {
+            let mut carry_over: bool = false;
+            for i in 0..result_len {
                 //get second column
                 let next_col = boxed
                     .iter()
                     .map(|row| row[i])
                     .filter(|ch| *ch != '#')
                     .collect::<Vec<char>>();
+
                 if let Some((nc_rv, nc_opv)) = next_col.split_last() {
-                    let opv = nc_opv
-                        .iter()
-                        .filter(|x| x.is_alphabetic())
-                        .collect::<Vec<char>>();
-                    match opv {
-                        [just_one] if just_one != nc_rv => {
-                            do_replacement(&mut boxed, vec![(just_one, '9'), (sc_rv, '0')]);
-                            remove(&[0, 9], possible_value)
+                    let mut sum: &char;
+
+                    match nc_opv {
+                        //no operating value
+                        [] => {
+                            carry_over = true;
+                            sum = &'1';
+                            do_replacement(&mut boxed, vec![(nc_rv, sum)])
+                        }
+                        //just one operating value
+                        [just_one] => {
+                            print!("next column{just_one:?}");
+                            /*
+                            if just_one != *nc_rv && nc_rv.is_alphabetic()
+                            let opv: Vec<char> = nc_opv
+                            .iter()
+                            .filter_map(|x| x.is_alphabetic().then(|| *x))
+                            .collect();
+                            if i == 1 {
+                                do_replacement(&mut boxed, vec![(&just_one, &'9'), (nc_rv, &'0')]);
+                                remove(&[0, 9], possible_value)
+                            } else {
+                                let guess =
+                                    guess(possible_value, nc_opv.to_vec(), nc_rv, &mut boxed);
+                            }
+                            [just_one] if !nc_rv.is_alphabetic() => {
+                                println!("next column operating value{nc_opv:?}");
+                                println!(
+                                    "my guess for {:?}----{:?}",
+                                    just_one,
+                                    guess(possible_value, nc_opv.to_vec(), nc_rv, &mut boxed)
+                                )
+                            } */
                         }
 
-                        _ => println!("None"),
+                        //more than one operating value
+                        _ => {
+                            if nc_rv.is_alphabetic() {
+                                if let Some(result) = generate_result(carry_over) {
+                                    let result = result % 10;
+                                    let pred =
+                                        guess(possible_value, nc_opv.to_vec(), result, &mut boxed);
+                                    println!("predicted{pred:?}");
+                                }
+                            }
+                        }
                     };
                 }
             }
         }
 
-        println!("{possible_value:?}");
-
         println!("{boxed:?}");
     }
 
-    pub fn do_replacement(boxed: &mut Vec<Vec<char>>, replacement: Vec<(&char, char)>) {
+    pub fn do_replacement(boxed: &mut Vec<Vec<char>>, replacement: Vec<(&char, &char)>) {
         for (key, value) in replacement.iter() {
             for row in boxed.iter_mut() {
                 if row.contains(key) {
                     row.iter_mut().for_each(|i| {
                         if i == *key {
-                            *i = *value;
+                            *i = **value;
                         };
                     });
                 }
@@ -97,6 +129,59 @@ pub mod alphametics {
         for i in number {
             let idx = po.iter_mut().position(|x| x == i).unwrap();
             po.remove(idx);
+        }
+    }
+
+    pub fn generate_result(carry_over: bool) -> Option<u32> {
+        if carry_over {
+            (10..19).next()
+        } else {
+            (1..19).next()
+        }
+    }
+
+    pub fn guess(
+        possible_value: &mut HashMap<char, Vec<u32>>,
+        operating_values: Vec<char>,
+        result_value: u32,
+        boxed: &mut Vec<Vec<char>>,
+    ) -> Option<Vec<u32>> {
+        remove(vec![result_value].as_slice(), possible_value);
+        let po = possible_value.clone();
+        let cpo = po.get(&'#').unwrap().as_slice();
+
+        let unknown: Vec<&char> = operating_values
+            .iter()
+            .filter(|ch| ch.is_alphabetic())
+            .collect();
+        let known: Vec<&char> = operating_values
+            .iter()
+            .filter(|ch| ch.is_digit(10))
+            .collect();
+
+        let mut trial_val = cpo.windows(unknown.len());
+
+        loop {
+            let trial_v = trial_val.next();
+
+            if let Some(tv) = trial_v {
+                let chs = tv
+                    .iter()
+                    .map(|tv| char::from_digit(*tv, 10).unwrap())
+                    .collect::<Vec<_>>();
+                chs.extend_from_slice(known);
+
+                let sum_of_opv = tv.iter().fold(0, |acc, ch| acc + ch);
+
+                if sum_of_opv == result_value {
+                    let iter: Vec<(&char, &char)> =
+                        operating_values.iter().zip(chs.iter()).collect();
+                    do_replacement(boxed, iter);
+                    remove(tv, possible_value);
+                    return Some(tv.to_vec());
+                }
+            } else {
+            }
         }
     }
 }
