@@ -1,28 +1,37 @@
 use std::collections::HashMap;
 
 pub mod alphametics {
-    use std::{collections::HashMap, io};
+    use std::collections::HashMap;
+    #[derive(Debug)]
+    pub struct PossibleValue {
+        values: Vec<u32>,
+    }
+    impl PossibleValue {
+        fn remove(&mut self, number: &[u32]) {
+            for i in number {
+                if let Some(idx) = self.values.iter_mut().position(|x| x == i) {
+                    self.values.remove(idx);
+                }
+            }
+        }
+    }
     pub fn solve(input: &str) -> Option<HashMap<char, u8>> {
-        let mut input_map: HashMap<char, Vec<u32>> = HashMap::new();
-
+        let mut pv = PossibleValue {
+            values: (0..=9).collect::<Vec<_>>(),
+        };
         let input = input.to_string();
         // input.chars().filter(|ch| ch.is_alphabetic());
-        input_map.insert('#', (0..=9).collect());
         let values = input.split("==").collect::<Vec<&str>>();
         let ops = values[0].to_string();
         let opv = ops.split("+").map(|i| i.trim()).collect::<Vec<&str>>();
         let result = values[1].trim();
 
-        deal(opv, result, &mut input_map);
+        deal(opv, result, &mut pv);
 
         None
     }
 
-    pub fn deal(
-        operating_values: Vec<&str>,
-        result: &str,
-        possible_value: &mut HashMap<char, Vec<u32>>,
-    ) {
+    pub fn deal(operating_values: Vec<&str>, result: &str, possible_value: &mut PossibleValue) {
         let mut boxed: Vec<Vec<char>> = Vec::new();
         let res = result.chars().collect::<Vec<char>>();
         let max_opv = *operating_values.iter().max_by_key(|x| x.len()).unwrap();
@@ -56,13 +65,16 @@ pub mod alphametics {
                         [] => {
                             do_replacement(&mut boxed, vec![(nc_rv, &'1')]);
 
-                            remove(vec![1].as_slice(), possible_value);
+                            possible_value.remove(&[1])
                         }
 
                         _ => {
                             println!("{:?}--", nc_opv);
+                            if nc_opv.contains(&'0') {
+                                carry_over = true
+                            }
                             loop {
-                                if let Some(result) = generate_result(possible_value) {
+                                if let Some(result) = generate_result(&possible_value.values) {
                                     let guess = guess(
                                         possible_value,
                                         nc_opv.to_vec(),
@@ -70,12 +82,11 @@ pub mod alphametics {
                                         carry_over,
                                         &mut boxed,
                                     );
-                                    println!("{:?}--", guess);
                                     if guess.is_ok() {
                                         break;
                                     }
                                 } else {
-                                    carry_over = true;
+                                    break;
                                 }
                             }
                         }
@@ -100,32 +111,19 @@ pub mod alphametics {
         }
     }
 
-    pub fn remove(number: &[u32], possible_value: &mut HashMap<char, Vec<u32>>) {
-        let po = possible_value.get_mut(&'#').unwrap();
-        for i in number {
-            if let Some(idx) = po.iter_mut().position(|x| x == i) {
-                po.remove(idx);
-            }
-        }
-    }
-
-    pub fn generate_result(possible_value: &HashMap<char, Vec<u32>>) -> Option<&u32> {
-        let po = possible_value.get(&'#').unwrap();
-        po.iter().next()
+    pub fn generate_result<'a>(possible_value: &'a Vec<u32>) -> Option<&u32> {
+        possible_value.iter().next()
     }
 
     pub fn guess(
-        possible_value: &mut HashMap<char, Vec<u32>>,
+        possible_value: &mut PossibleValue,
         operating_values: Vec<char>,
         result_value: (char, u32),
         carry_over: bool,
         boxed: &mut Vec<Vec<char>>,
     ) -> Result<(), String> {
-        remove(vec![result_value.1].as_slice(), possible_value);
-
-        let po = possible_value.clone();
-        let cpo = po.get(&'#').unwrap().as_slice();
-
+        //remove(vec![result_value.1].as_slice(), possible_value);
+        possible_value.remove(&[result_value.1]);
         let unknown: Vec<&char> = operating_values
             .iter()
             .filter(|ch| ch.is_alphabetic())
@@ -135,7 +133,7 @@ pub mod alphametics {
             .filter(|ch| ch.is_digit(10))
             .cloned()
             .collect();
-
+        let cpo = possible_value.values.clone();
         let mut trial_val = cpo.windows(unknown.len());
 
         loop {
@@ -162,9 +160,8 @@ pub mod alphametics {
                     iter.push((&result_value.0, &res_char));
 
                     do_replacement(boxed, iter);
-                    remove(tv, possible_value);
-
-                    remove(vec![result_value.1].as_slice(), possible_value);
+                    possible_value.remove(tv);
+                    // remove(tv, possible_value);
                     return Ok(());
                 }
             } else {
