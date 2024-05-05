@@ -1,6 +1,9 @@
 pub mod acronym {
     pub fn abbreviate(phrase: &str) -> String {
-        let phrase_vec: Vec<String> = phrase.split(' ').map(|i| i.to_string()).collect();
+        let phrase_vec: Vec<String> = phrase
+            .split(' ')
+            .map(|i| i.trim_matches('_').to_string())
+            .collect();
 
         let mut res = phrase_vec
             .iter()
@@ -11,7 +14,6 @@ pub mod acronym {
             .filter(|x| x.is_alphabetic())
             .map(|i| i.to_string().to_uppercase())
             .collect::<Vec<_>>();
-        println!("res{res:?}");
         for (idx, ele) in phrase_vec.clone().iter().enumerate() {
             if ele.chars().all(|i| i.is_uppercase()) {
                 continue;
