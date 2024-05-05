@@ -1,19 +1,32 @@
 pub mod acronym {
     pub fn abbreviate(phrase: &str) -> String {
-        let mut phrase_vec: Vec<String> = phrase.split(' ').map(|i| i.to_string()).collect();
+        let phrase_vec: Vec<String> = phrase.split(' ').map(|i| i.to_string()).collect();
 
-        for (idx, ele) in phrase_vec.clone().iter().enumerate() {
-            if let Some(ch) = ele.chars().find(|c| c.is_uppercase()) {
-                phrase_vec.insert(idx, ch.to_string())
-            }
-        }
-        let res = phrase_vec
+        let mut res = phrase_vec
             .iter()
             .map(|x| {
                 let ch: Vec<char> = x.chars().collect();
-                ch[0].to_string().to_uppercase()
+                ch[0]
             })
+            .filter(|x| x.is_alphabetic())
+            .map(|i| i.to_string().to_uppercase())
             .collect::<Vec<_>>();
+        println!("res{res:?}");
+        for (idx, ele) in phrase_vec.clone().iter().enumerate() {
+            if ele.chars().all(|i| i.is_uppercase()) {
+                continue;
+            }
+            let chs: Vec<char> = ele[1..].chars().collect();
+            if let Some(pos) = chs.iter().position(|c| c.is_uppercase() || *c == '-') {
+                let ch: String = if chs[pos] == '-' {
+                    chs[pos + 1].to_string().to_uppercase()
+                } else {
+                    chs[pos].to_string()
+                };
+                println!("{:?}", ch);
+                res.insert(idx + 1, ch)
+            }
+        }
         println!("{:?}", res.join(""));
         res.join("")
     }

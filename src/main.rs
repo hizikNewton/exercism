@@ -12,7 +12,7 @@ use medium::alphametics::alphametics;
 pub mod medium;
 use medium::acronym::acronym::abbreviate;
 fn main() {
-    let input = "Portable Network Graphics";
+    let input = "The Road _Not_ Taken";
     abbreviate(input);
 }
 
