@@ -6,17 +6,20 @@ use easy::sum_of_multiple::sum_of_multiples;
 use medium::{anagram::anagrams_for};
 use medium::all_your_base;
 use medium::allergy::{allergies::{Allergen, Allergies}, compare_allergy_vectors};
+use medium::alphametics::alphametics;
 */
 
 pub mod medium;
-use medium::alphametics::alphametics;
+use medium::acronym::acronym::abbreviate;
 fn main() {
-    let puzzle = "SEND + MORE == MONEY";
-    alphametics::solve(puzzle);
+    let input = "Portable Network Graphics";
+    abbreviate(input);
 }
 
 /*
 
+    let puzzle = "SEND + MORE == MONEY";
+    alphametics::solve(puzzle);
 let allergies = Allergies::new(509).allergies();
     let expected = &[
         Allergen::Eggs,
