@@ -15,7 +15,7 @@ use medium::binary_search::binary_search;
 fn main() {
     println!(
         "{:?}",
-        binary_search::find(&[1, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377], 21)
+        binary_search::find(&[1, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377, 634], 144)
     );
 }
 

@@ -6,7 +6,6 @@ pub mod binary_search {
         let mut arr = array;
         let mid = arr.len() / 2;
         let mut idx = mid;
-        let (smallest, largest) = (arr[0], arr[arr.len() - 1]);
         loop {
             if key < arr[0] {
                 return None;
@@ -17,8 +16,9 @@ pub mod binary_search {
             } else {
                 if arr[mid] == key {
                     return Some(idx);
+                } else if arr[mid - 1] == key {
+                    return Some(idx - 1);
                 } else if key < mid as i32 {
-                    println!("{key:?},{mid:?}");
                     arr = &arr[0..=mid];
                 } else {
                     println!("{key:?},{mid:?}");
